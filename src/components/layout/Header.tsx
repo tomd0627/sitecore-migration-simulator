@@ -59,7 +59,7 @@ export function Header() {
             >
               <ArrowRightLeft size={14} className="text-violet" />
             </span>
-            <span className="text-sm font-semibold hidden sm:block">
+            <span className="text-sm font-semibold">
               Sitecore{" "}
               <span className="text-dim font-normal">Migration Simulator</span>
             </span>

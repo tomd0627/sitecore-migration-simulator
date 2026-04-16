@@ -10,7 +10,7 @@ export function Footer() {
             <span className="text-nextjs font-medium">Next.js 15</span>
             {" "}knowledge from real enterprise migrations.
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col items-center gap-1.5 sm:flex-row sm:gap-4">
             <span className="flex items-center gap-1.5">
               <span
                 className="w-2 h-2 rounded-full bg-sitecore"
