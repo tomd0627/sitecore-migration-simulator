@@ -21,6 +21,7 @@ export function SimulatorWrapper({ steps }: SimulatorWrapperProps) {
     Record<number, string>
   >({});
   const [finished, setFinished] = useState(false);
+  const [attemptedNext, setAttemptedNext] = useState(false);
 
   const stepContentRef = useRef<HTMLDivElement>(null);
 
@@ -31,9 +32,15 @@ export function SimulatorWrapper({ steps }: SimulatorWrapperProps) {
     });
   }, []);
 
+  const currentStepHasDecision = steps[currentStep]?.decisions?.length > 0;
+  const currentDecisionMade = !!selectedDecisions[currentStep];
+  const canProceed = !currentStepHasDecision || currentDecisionMade;
+  const showValidation = attemptedNext && !canProceed;
+
   const goToStep = useCallback(
     (index: number) => {
       setCurrentStep(index);
+      setAttemptedNext(false);
       setFinished(false);
       scrollToTop();
     },
@@ -41,6 +48,11 @@ export function SimulatorWrapper({ steps }: SimulatorWrapperProps) {
   );
 
   const handleNext = useCallback(() => {
+    if (!canProceed) {
+      setAttemptedNext(true);
+      return;
+    }
+    setAttemptedNext(false);
     setCompletedSteps((prev) => new Set([...prev, currentStep]));
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
@@ -50,7 +62,7 @@ export function SimulatorWrapper({ steps }: SimulatorWrapperProps) {
       setFinished(true);
       scrollToTop();
     }
-  }, [currentStep, steps.length, scrollToTop]);
+  }, [canProceed, currentStep, steps.length, scrollToTop]);
 
   const handlePrev = useCallback(() => {
     if (currentStep > 0) {
@@ -62,6 +74,7 @@ export function SimulatorWrapper({ steps }: SimulatorWrapperProps) {
 
   const handleDecisionSelect = useCallback(
     (decisionId: string) => {
+      setAttemptedNext(false);
       setSelectedDecisions((prev) => ({
         ...prev,
         [currentStep]: decisionId,
@@ -114,6 +127,7 @@ export function SimulatorWrapper({ steps }: SimulatorWrapperProps) {
       <div className="flex gap-8">
         {/* Desktop sidebar roadmap */}
         <aside
+          id="roadmap"
           className="hidden md:block w-64 shrink-0 sticky top-20 self-start max-h-[calc(100vh-6rem)] overflow-y-auto"
           aria-label="Migration roadmap navigation"
         >
@@ -174,12 +188,15 @@ export function SimulatorWrapper({ steps }: SimulatorWrapperProps) {
                     selectedDecisions[currentStep] ?? null
                   }
                   onDecisionSelect={handleDecisionSelect}
+                  showValidation={showValidation}
                 />
                 <NavigationButtons
                   onPrev={handlePrev}
                   onNext={handleNext}
                   isFirst={currentStep === 0}
                   isLast={currentStep === steps.length - 1}
+                  canProceed={canProceed}
+                  showWarning={showValidation}
                 />
               </>
             )}

@@ -22,12 +22,14 @@ interface StepCardProps {
   step: PreparedStep;
   selectedDecision: string | null;
   onDecisionSelect: (id: string) => void;
+  showValidation?: boolean;
 }
 
 export function StepCard({
   step,
   selectedDecision,
   onDecisionSelect,
+  showValidation = false,
 }: StepCardProps) {
   const { variant, icon: SeverityIcon } = severityConfig[step.severity];
 
@@ -92,6 +94,8 @@ export function StepCard({
           decisions={step.decisions}
           selectedId={selectedDecision}
           onSelect={onDecisionSelect}
+          stepId={step.id}
+          showValidation={showValidation}
         />
       </section>
 

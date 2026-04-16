@@ -2,20 +2,24 @@
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
-import { CheckCircle2, Plus, Minus } from "lucide-react";
 import { useState } from "react";
+import { AlertTriangle, CheckCircle2, Minus, Plus } from "lucide-react";
 import type { DecisionOption } from "@/data/types";
 
 interface DecisionPointProps {
   decisions: DecisionOption[];
   selectedId: string | null;
   onSelect: (id: string) => void;
+  stepId: number;
+  showValidation?: boolean;
 }
 
 export function DecisionPoint({
   decisions,
   selectedId,
   onSelect,
+  stepId,
+  showValidation = false,
 }: DecisionPointProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -23,12 +27,15 @@ export function DecisionPoint({
     setExpandedId((prev) => (prev === id ? null : id));
   }
 
+  const groupName = `step-${stepId}-decision`;
+
   return (
     <fieldset>
       <legend className="text-sm font-semibold text-ink mb-3">
         Choose your approach
       </legend>
-      <div className="space-y-2" role="radiogroup">
+
+      <div className="space-y-2">
         {decisions.map((decision) => {
           const isSelected = selectedId === decision.id;
           const isExpanded = expandedId === decision.id;
@@ -43,49 +50,52 @@ export function DecisionPoint({
                   : "border-edge bg-surface hover:border-[color-mix(in_srgb,var(--color-edge)_50%,var(--color-faint))]"
               )}
             >
-              {/* Option header — selectable */}
-              <div className="flex items-start gap-3 p-4">
-                <button
-                  role="radio"
-                  aria-checked={isSelected}
-                  onClick={() => onSelect(decision.id)}
-                  className={cn(
-                    "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
-                    isSelected
-                      ? "border-violet bg-violet"
-                      : "border-faint hover:border-dim"
-                  )}
-                  aria-label={`Select: ${decision.title}`}
-                >
-                  {isSelected && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-canvas" aria-hidden="true" />
-                  )}
-                </button>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <span
-                      className={cn(
-                        "text-sm font-semibold",
-                        isSelected ? "text-ink" : "text-ink"
-                      )}
-                    >
-                      {decision.title}
-                    </span>
-                    {decision.recommended && (
-                      <Badge variant="nextjs">
-                        <CheckCircle2 size={10} aria-hidden="true" />
-                        Recommended
-                      </Badge>
+              {/* Option header row */}
+              <div className="flex items-start gap-2 p-4">
+                {/* Label covers radio + content — full card selection */}
+                <label className="flex items-start gap-3 flex-1 cursor-pointer min-w-0">
+                  <input
+                    type="radio"
+                    name={groupName}
+                    value={decision.id}
+                    checked={isSelected}
+                    onChange={() => onSelect(decision.id)}
+                    className="sr-only"
+                  />
+                  {/* Custom radio indicator */}
+                  <span
+                    className={cn(
+                      "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
+                      isSelected ? "border-violet bg-violet" : "border-faint"
                     )}
-                  </div>
-                  <p className="text-xs text-dim leading-relaxed">
-                    {decision.description}
-                  </p>
-                </div>
+                    aria-hidden="true"
+                  >
+                    {isSelected && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-canvas" />
+                    )}
+                  </span>
 
-                {/* Expand trade-offs toggle */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <span className="text-sm font-semibold text-ink">
+                        {decision.title}
+                      </span>
+                      {decision.recommended && (
+                        <Badge variant="nextjs">
+                          <CheckCircle2 size={10} aria-hidden="true" />
+                          Recommended
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-dim leading-relaxed">
+                      {decision.description}
+                    </p>
+                  </div>
+                </label>
+
+                {/* Expand trade-offs toggle — outside label so it doesn't trigger selection */}
                 <button
+                  type="button"
                   onClick={() => toggleExpand(decision.id)}
                   aria-expanded={isExpanded}
                   aria-controls={`tradeoffs-${decision.id}`}
@@ -104,22 +114,30 @@ export function DecisionPoint({
 
               {/* Trade-offs panel */}
               {isExpanded && (
-                <div
-                  id={`tradeoffs-${decision.id}`}
-                  className="px-4 pb-4 pt-0"
-                >
+                <div id={`tradeoffs-${decision.id}`} className="px-4 pb-4 pt-0">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-edge">
                     <div>
                       <p className="text-xs font-semibold text-success mb-2 flex items-center gap-1.5">
-                        <span className="w-3 h-3 rounded-full bg-success/20 flex items-center justify-center" aria-hidden="true">
+                        <span
+                          className="w-3 h-3 rounded-full bg-success/20 flex items-center justify-center"
+                          aria-hidden="true"
+                        >
                           <span className="w-1.5 h-1.5 rounded-full bg-success" />
                         </span>
                         Advantages
                       </p>
                       <ul className="space-y-1.5" aria-label="Advantages">
-                        {decision.pros.map((pro, i) => (
-                          <li key={i} className="text-xs text-dim leading-relaxed flex gap-2">
-                            <span className="text-success mt-0.5 shrink-0" aria-hidden="true">+</span>
+                        {decision.pros.map((pro) => (
+                          <li
+                            key={pro}
+                            className="text-xs text-dim leading-relaxed flex gap-2"
+                          >
+                            <span
+                              className="text-success mt-0.5 shrink-0"
+                              aria-hidden="true"
+                            >
+                              +
+                            </span>
                             {pro}
                           </li>
                         ))}
@@ -127,15 +145,26 @@ export function DecisionPoint({
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-caution mb-2 flex items-center gap-1.5">
-                        <span className="w-3 h-3 rounded-full bg-caution/20 flex items-center justify-center" aria-hidden="true">
+                        <span
+                          className="w-3 h-3 rounded-full bg-caution/20 flex items-center justify-center"
+                          aria-hidden="true"
+                        >
                           <span className="w-1.5 h-1.5 rounded-full bg-caution" />
                         </span>
                         Trade-offs
                       </p>
                       <ul className="space-y-1.5" aria-label="Trade-offs">
-                        {decision.cons.map((con, i) => (
-                          <li key={i} className="text-xs text-dim leading-relaxed flex gap-2">
-                            <span className="text-caution mt-0.5 shrink-0" aria-hidden="true">−</span>
+                        {decision.cons.map((con) => (
+                          <li
+                            key={con}
+                            className="text-xs text-dim leading-relaxed flex gap-2"
+                          >
+                            <span
+                              className="text-caution mt-0.5 shrink-0"
+                              aria-hidden="true"
+                            >
+                              −
+                            </span>
                             {con}
                           </li>
                         ))}
@@ -148,6 +177,17 @@ export function DecisionPoint({
           );
         })}
       </div>
+
+      {/* Inline validation message */}
+      {showValidation && !selectedId && (
+        <p
+          role="alert"
+          className="flex items-center gap-1.5 mt-3 text-xs text-caution"
+        >
+          <AlertTriangle size={12} aria-hidden="true" />
+          Select an approach before continuing.
+        </p>
+      )}
     </fieldset>
   );
 }
