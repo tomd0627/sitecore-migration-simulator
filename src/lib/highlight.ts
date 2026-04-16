@@ -8,6 +8,9 @@ export async function highlight(
     return await codeToHtml(code, {
       lang,
       theme: "github-dark",
+      colorReplacements: {
+        "#6A737D": "#768EA9", // boost comment contrast for WCAG AA
+      },
     });
   } catch {
     const escaped = code
