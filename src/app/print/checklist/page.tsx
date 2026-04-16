@@ -138,10 +138,6 @@ export default function ChecklistPage() {
             ))}
           </div>
         ))}
-
-        <p className="print-footer">
-          Sitecore Migration Simulator · tomdeluca.dev
-        </p>
       </div>
     </>
   );
