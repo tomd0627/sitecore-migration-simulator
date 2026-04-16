@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { AlertTriangle, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface NavigationButtonsProps {
   onPrev: () => void;
@@ -68,7 +68,7 @@ export function NavigationButtons({
         ) : showWarning ? (
           <>
             <AlertTriangle size={16} aria-hidden="true" />
-            Choose an approach
+            Next Step
           </>
         ) : (
           <>

@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { PreparedStep } from "@/data/types";
+import { CompletionScreen } from "./CompletionScreen";
 import { MigrationRoadmap } from "./MigrationRoadmap";
 import { MobileProgressBar } from "./MobileProgressBar";
-import { StepCard } from "./StepCard";
 import { NavigationButtons } from "./NavigationButtons";
-import { CompletionScreen } from "./CompletionScreen";
+import { StepCard } from "./StepCard";
 
 interface SimulatorWrapperProps {
   steps: PreparedStep[];
@@ -120,8 +120,6 @@ export function SimulatorWrapper({ steps }: SimulatorWrapperProps) {
       <MobileProgressBar
         currentStep={currentStep}
         completedCount={completedSteps.size}
-        onPrev={handlePrev}
-        onNext={handleNext}
       />
 
       <div className="flex gap-8">

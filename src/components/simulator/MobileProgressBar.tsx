@@ -1,22 +1,17 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const TOTAL_STEPS = 10;
 
 interface MobileProgressBarProps {
   currentStep: number;
   completedCount: number;
-  onPrev: () => void;
-  onNext: () => void;
 }
 
 export function MobileProgressBar({
   currentStep,
   completedCount,
-  onPrev,
-  onNext,
 }: MobileProgressBarProps) {
   const progressPct = Math.round((completedCount / TOTAL_STEPS) * 100);
 
@@ -66,37 +61,6 @@ export function MobileProgressBar({
         ))}
       </div>
 
-      {/* Nav buttons */}
-      <div className="flex gap-2 mt-3">
-        <button
-          onClick={onPrev}
-          disabled={currentStep === 0}
-          aria-label="Previous step"
-          className={cn(
-            "flex-1 flex items-center justify-center gap-1 py-1.5",
-            "text-xs rounded-lg border border-edge transition-colors",
-            "disabled:opacity-30 disabled:cursor-not-allowed",
-            "hover:bg-raised hover:text-ink text-dim"
-          )}
-        >
-          <ChevronLeft size={14} aria-hidden="true" />
-          Prev
-        </button>
-        <button
-          onClick={onNext}
-          disabled={currentStep === TOTAL_STEPS - 1}
-          aria-label="Next step"
-          className={cn(
-            "flex-1 flex items-center justify-center gap-1 py-1.5",
-            "text-xs rounded-lg border border-edge transition-colors",
-            "disabled:opacity-30 disabled:cursor-not-allowed",
-            "hover:bg-raised hover:text-ink text-dim"
-          )}
-        >
-          Next
-          <ChevronRight size={14} aria-hidden="true" />
-        </button>
-      </div>
     </div>
   );
 }

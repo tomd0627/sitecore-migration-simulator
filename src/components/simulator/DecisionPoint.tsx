@@ -1,9 +1,9 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/Badge";
 import { useState } from "react";
 import { AlertTriangle, CheckCircle2, Minus, Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/Badge";
 import type { DecisionOption } from "@/data/types";
 
 interface DecisionPointProps {
@@ -45,6 +45,7 @@ export function DecisionPoint({
               key={decision.id}
               className={cn(
                 "rounded-xl border transition-all duration-150",
+                "has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-violet/50 has-[input:focus-visible]:ring-offset-1",
                 isSelected
                   ? "border-violet bg-violet-muted"
                   : "border-edge bg-surface hover:border-[color-mix(in_srgb,var(--color-edge)_50%,var(--color-faint))]"
@@ -60,12 +61,13 @@ export function DecisionPoint({
                     value={decision.id}
                     checked={isSelected}
                     onChange={() => onSelect(decision.id)}
-                    className="sr-only"
+                    className="sr-only peer"
                   />
                   {/* Custom radio indicator */}
                   <span
                     className={cn(
                       "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
+                      "peer-focus-visible:ring-2 peer-focus-visible:ring-violet/50 peer-focus-visible:ring-offset-1",
                       isSelected ? "border-violet bg-violet" : "border-faint"
                     )}
                     aria-hidden="true"
